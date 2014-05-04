@@ -1,15 +1,5 @@
     {{ template "chrome/header.html" .}}
 
-    <div class="container">
-      <ul class="nav nav-pills">
-        {{ range $idx, $value := .Site.Indexes.categories.ByCount }}
-          <li><a href="/categories/{{ $value.Name | urlize }}">{{ $value.Name }}
-                  <span class="badge">{{ $value.Count }}</span></a>
-          </li>
-        {{ end }}
-      </ul>
-    </div>
-
     <div class="row-fluid">
         <section id="content" class="body">
             <ul id="list">
