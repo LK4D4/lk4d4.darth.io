@@ -1,0 +1,13 @@
+{{ template "chrome/header.html" . }}
+
+      <h1>{{ .Title }}</h1>
+        <section id="main">
+          <h5 id="date"> {{ .Date.Format "Jan 2, 2006" }} </h5>
+          {{ .Content }}
+        </section>
+
+  {{ template "chrome/categories.html" . }}
+
+  {{ template "chrome/prev_next.html" . }}
+
+  {{ template "chrome/footer.html" }}
