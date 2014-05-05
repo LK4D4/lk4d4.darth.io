@@ -9,7 +9,7 @@ categories:
 
 ## Prelude
 
-Recently I moved my jabber-server to DigitalOcean VPS. Run prosody in docker was
+Recently I moved my jabber-server to DigitalOcean VPS. Run Prosody in docker was
 so easy, that I decided create this blog. And of course deploy it with docker!
 
 ## Content
@@ -27,7 +27,7 @@ WORKDIR /src
 ENTRYPOINT ["git"]
 CMD ["pull"]
 ```
-There is no magic here: just clone repo to `/src`(it will be used below),
+There is no magic here: just clone repo to `/src` (it will be used below),
 and update it on container start.
 
 Build image:
@@ -50,7 +50,7 @@ docker start blog_content
 
 ## Hugo
 
-[Hugo](hugo.spf13.com) -- very fast static site generator, written in Go(so
+[Hugo](hugo.spf13.com) -- very fast static site generator, written in Go (so
 many cool things written in Go btw).
 
 Idea is to run hugo in docker container so it reads contents from one directory
@@ -122,7 +122,7 @@ you can read it :) I can update it just with `docker start blog_content`.
 
 ## Conclusions
 
-It's really fun to use docker. You don't need to installing and removing
+It's really fun to use docker. You don't need to install and remove
 tons of crap on host machine, docker can handle it all for you.
 
 ![docker](https://www.docker.io/static/img/homepage-docker-logo.png)
