@@ -7,12 +7,12 @@ categories:
     - "hugo"
 ---
 
-## Prelude
+#### Prelude
 
 Recently I moved my jabber-server to DigitalOcean VPS. Run Prosody in docker was
 so easy, that I decided create this blog. And of course deploy it with docker!
 
-## Content
+#### Content
 
 At first we need container with templates and content for blog generation.
 I used next dockerfile:
@@ -48,7 +48,7 @@ For updating content and templates from github we need just:
 docker start blog_content
 ```
 
-## Hugo
+#### Hugo
 
 [Hugo](hugo.spf13.com) -- very fast static site generator, written in Go (so
 many cool things written in Go btw).
@@ -85,7 +85,7 @@ Here the trick with
 `/src` from `blog_content` container, and yeah, we're going to use
 `/var/www/blog` from `blog` container.
 
-## Nginx
+#### Nginx
 
 So, now we have container with templates and content `blog_content`, content
 with ready to use blog `blog`, it's time to show this blog to the world.
@@ -120,7 +120,7 @@ docker run -p 80:80 -d --name=nginx --volumes-from=blog nginx
 That's it, now blog is running on [lk4d4.darth.io](http://lk4d4.darth.io) and
 you can read it :) I can update it just with `docker start blog_content`.
 
-## Conclusions
+#### Conclusions
 
 It's really fun to use docker. You don't need to install and remove
 tons of crap on host machine, docker can handle it all for you.
