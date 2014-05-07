@@ -10,7 +10,7 @@ categories:
 
 There is awesome coverage in go. You can read about
 it [here](http://blog.golang.org/cover). But also it has some limitations.
-For example let's assume that we haves next code structure:
+For example let's assume that we have next code structure:
 
 ```
 src
