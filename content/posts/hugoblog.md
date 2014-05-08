@@ -50,7 +50,7 @@ docker start blog_content
 
 #### Hugo
 
-[Hugo](hugo.spf13.com) -- very fast static site generator, written in Go (so
+[Hugo](http://hugo.spf13.com) -- very fast static site generator, written in Go (so
 many cool things written in Go btw).
 
 Idea is to run hugo in docker container so it reads contents from one directory
