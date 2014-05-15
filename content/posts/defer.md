@@ -9,7 +9,7 @@ categories:
 
 #### Prelude
 This post based on
-[real events](https://github.com/LK4D4/docker/commit/5128feb690e8fd0244d1fecef5f3f5f77598bbfa)
+[real events](https://github.com/dotcloud/docker/commit/5128feb690e8fd0244d1fecef5f3f5f77598bbfa)
 in docker repository.
 When I revealed that my 20-percent-cooler refactoring made `Pop` function x4-x5
 times slower, I did some research and concluded, that problem was in using
