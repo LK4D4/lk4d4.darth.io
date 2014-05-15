@@ -144,3 +144,14 @@ BenchmarkGetDefer  10000            249029 ns/op
 #### Conclusion
 
 You don't need defers in small functions with one-two exit points.
+
+#### Update
+
+Retested with go from `tip` as Cezar Sá Espinola suggested. So, here results:
+
+```
+BenchmarkPut       50000             54633 ns/op
+BenchmarkPutDefer          10000            102971 ns/op
+BenchmarkGet       50000             65148 ns/op
+BenchmarkGetDefer          10000            180839 ns/op
+```
