@@ -11,7 +11,7 @@ categories:
 
 Yesterday I finished my first 30-day [streak](https://github.com/LK4D4) on GitHub.
 Most of contributions were to [Docker](https://github.com/dotcloud/docker) --
-biggest opensource project on Go. I learned a lot in this month, and it was
+the biggest opensource project on Go. I learned a lot in this month, and it was
 really cool. I think that this is mostly because of Go language. I've been
 programming on Python for five years and I was never so excited about open source,
 because Python is not even half so fun as Go.
@@ -37,7 +37,7 @@ code, passing mutex by value and etc.
 
 I love my awesome vim with awesome [vim-go](https://github.com/fatih/vim-go) plugin,
 which is integrated with tools mentioned above.
-It is formats code for me, adds needed imports, removes unused imports, shows
+It formats code for me, adds needed imports, removes unused imports, shows
 documentation, supports tagbar and more. And my favourite - go to definition. I
 really suffered without it :) With vim-go my development rate became faster
 than I could imagine. You can see my config in my dotfiles
@@ -49,7 +49,7 @@ than I could imagine. You can see my config in my dotfiles
 This is one of the most important and one of the most underestimated thing.
 Very useful and very easy to use. You can find description and examples
 [here](http://blog.golang.org/race-detector). I've found many race conditions
-with this tool([#1](https://github.com/dotcloud/docker/pull/6118),
+with this tool ([#1](https://github.com/dotcloud/docker/pull/6118),
 [#2](https://github.com/dotcloud/docker/pull/6150),
 [#3](https://github.com/dotcloud/docker/pull/6214),
 [#4](https://github.com/dotcloud/docker/pull/6232),
@@ -65,7 +65,7 @@ when you try to hack docker first time.
 #### Tests
 There are three kinds of tests in docker repo:
 
-* `unit` - unit tests(ah, we all know what is unit tests, right?). This tests
+* `unit` - unit tests(ah, we all know what unit tests are, right?). These tests
 spreaded all over repository and can be run by `make test-unit`. You can run
 tests for one directory, specifying it in `TESTDIRS` variable. For example
 
@@ -78,7 +78,7 @@ tests for one directory, specifying it in `TESTDIRS` variable. For example
 * `integration-cli` - integration tests, that use external docker commands
 (for example `docker build`, `docker run`, etc.). It is very easy to write this
 kind of tests and you should do it if you think that your changes can change
-docker behavior from client point of view. This test located in `integration-cli`
+Docker's behavior from client's point of view. These tests are located in `integration-cli`
 directory and can be run by `make test-integration-cli`. You can run one or more
 specific tests with setting `TESTFLAGS` variable. For example
 
@@ -86,11 +86,11 @@ specific tests with setting `TESTFLAGS` variable. For example
     TESTFLAGS="-run TestBuild" make test-integration-cli
     ```
 
-    will run all tests that name begins from `TestBuild`.
+    will run all tests whose names starts with `TestBuild`.
 
 * `integration` - integration tests, that use internal docker datastructures.
-It is deprecated now, so If you want to write tests you should prefer
-`integration-cli` or `unit`. This tests located in `integration` directory and
+It is deprecated now, so if you want to write tests you should prefer
+`integration-cli` or `unit`. These tests are located in `integration` directory and
 can be run by `make test-integration`.
 
 All tests can be run by `make test`.
@@ -106,12 +106,12 @@ need right `$GOPATH`, here is the trick:
 
     export GOPATH=<workspace>/src/github.com/dotcloud/docker/vendor:<workspace>
 
-And you can for example run:
+And then, for example you can run:
 
     go test github.com/dotcloud/docker/daemon/networkdriver/ipallocator
 
 Some tests require external libs for example `libdevmapper`, you can disable
-this with `DOCKER_BUILDTAGS` environment variable. For example:
+it with `DOCKER_BUILDTAGS` environment variable. For example:
 
     export DOCKER_BUILDTAGS='exclude_graphdriver_devicemapper exclude_graphdriver_aufs'
 
@@ -150,8 +150,8 @@ Docker load testing. Usage is pretty straightforward:
 
     ./docker-stress -c 50 -t 5
 
-Here 50 clients trying to run containers which will alive for five seconds.
-`docker-stress` use only `docker run` jobs for testing, so I prefer to run in
+Here 50 clients are trying to run containers, which will alive for five seconds.
+`docker-stress` uses only `docker run` jobs for testing, so I prefer also to run in
 parallel sort of:
 
     docker events
@@ -160,7 +160,7 @@ parallel sort of:
 
 and so on.
 
-#### Useful inks
+#### Useful links
 You definitely need to read
 [Contributing to Docker](https://github.com/dotcloud/docker/blob/master/CONTRIBUTING.md)
 and [Setting Up a Dev Environment](https://github.com/dotcloud/docker/blob/master/docs/sources/contributing/devenvironment.md).
@@ -171,8 +171,8 @@ I really don't think that something else is needed for Docker hacking start.
 
 This is all that I wanted to tell you about my first big opensource experience.
 Also, just today Docker folks launched some
-[new projects](https://github.com/docker) and I am very excited about this.
+[new projects](https://github.com/docker) and I am very excited about it.
 So, I want to invite you all to the magical world of Go, Opensource and,
 of course, Docker.
 
-P.S.: Sorry for my bad english :)
+P.S.: Sorry for my bad English :)
