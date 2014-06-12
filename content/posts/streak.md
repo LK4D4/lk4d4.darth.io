@@ -174,5 +174,3 @@ Also, just today Docker folks launched some
 [new projects](https://github.com/docker) and I am very excited about it.
 So, I want to invite you all to the magical world of Go, Opensource and,
 of course, Docker.
-
-P.S.: Sorry for my bad English :)
