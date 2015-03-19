@@ -24,7 +24,7 @@ without it.
 
 #### Code
 
-{{% highlight go %}}
+<pre><code class="go">
 package defertest
 
 import (
@@ -74,11 +74,11 @@ func (q *Queue) GetDefer() int {
 	q.arr = q.arr[1:]
 	return res
 }
-{{% /highlight %}}
+</code></pre>
 
 #### Benchmarks
 
-{{% highlight go %}}
+<pre><code class="go">
 package defertest
 
 import (
@@ -130,7 +130,7 @@ func BenchmarkGetDefer(b *testing.B) {
 		}
 	}
 }
-{{% /highlight %}}
+</code></pre>
 
 #### Results
 
