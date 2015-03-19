@@ -24,113 +24,113 @@ without it.
 
 #### Code
 
-<pre><code class="go">
+{{< highlight go >}}
 package defertest
 
 import (
-	"sync"
+    "sync"
 )
 
 type Queue struct {
-	sync.Mutex
-	arr []int
+    sync.Mutex
+    arr []int
 }
 
 func New() *Queue {
-	return &Queue{}
+    return &Queue{}
 }
 
 func (q *Queue) Put(elem int) {
-	q.Lock()
-	q.arr = append(q.arr, elem)
-	q.Unlock()
+    q.Lock()
+    q.arr = append(q.arr, elem)
+    q.Unlock()
 }
 
 func (q *Queue) PutDefer(elem int) {
-	q.Lock()
-	defer q.Unlock()
-	q.arr = append(q.arr, elem)
+    q.Lock()
+    defer q.Unlock()
+    q.arr = append(q.arr, elem)
 }
 
 func (q *Queue) Get() int {
-	q.Lock()
-	if len(q.arr) == 0 {
-		q.Unlock()
-		return 0
-	}
-	res := q.arr[0]
-	q.arr = q.arr[1:]
-	q.Unlock()
-	return res
+    q.Lock()
+    if len(q.arr) == 0 {
+        q.Unlock()
+        return 0
+    }
+    res := q.arr[0]
+    q.arr = q.arr[1:]
+    q.Unlock()
+    return res
 }
 
 func (q *Queue) GetDefer() int {
-	q.Lock()
-	defer q.Unlock()
-	if len(q.arr) == 0 {
-		return 0
-	}
-	res := q.arr[0]
-	q.arr = q.arr[1:]
-	return res
+    q.Lock()
+    defer q.Unlock()
+    if len(q.arr) == 0 {
+        return 0
+    }
+    res := q.arr[0]
+    q.arr = q.arr[1:]
+    return res
 }
-</code></pre>
+{{< /highlight >}}
 
 #### Benchmarks
 
-<pre><code class="go">
+{{< highlight go >}}
 package defertest
 
 import (
-	"testing"
+    "testing"
 )
 
 func BenchmarkPut(b *testing.B) {
-	q := New()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < 1000; j++ {
-			q.Put(j)
-		}
-	}
+    q := New()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        for j := 0; j < 1000; j++ {
+            q.Put(j)
+        }
+    }
 }
 
 func BenchmarkPutDefer(b *testing.B) {
-	q := New()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < 1000; j++ {
-			q.PutDefer(j)
-		}
-	}
+    q := New()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        for j := 0; j < 1000; j++ {
+            q.PutDefer(j)
+        }
+    }
 }
 
 func BenchmarkGet(b *testing.B) {
-	q := New()
-	for i := 0; i < 1000; i++ {
-		q.Put(i)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < 2000; j++ {
-			q.Get()
-		}
-	}
+    q := New()
+    for i := 0; i < 1000; i++ {
+        q.Put(i)
+    }
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        for j := 0; j < 2000; j++ {
+            q.Get()
+        }
+    }
 }
 
 func BenchmarkGetDefer(b *testing.B) {
-	q := New()
-	for i := 0; i < 1000; i++ {
-		q.Put(i)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < 2000; j++ {
-			q.GetDefer()
-		}
-	}
+    q := New()
+    for i := 0; i < 1000; i++ {
+        q.Put(i)
+    }
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        for j := 0; j < 2000; j++ {
+            q.GetDefer()
+        }
+    }
 }
-</code></pre>
+{{< /highlight >}}
 
 #### Results
 
