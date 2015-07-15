@@ -1,8 +1,12 @@
 <article class="post" style="margin-bottom: 40px;">
-  <h2><a href='{{ .Permalink }}'> {{ .Title }}</a> </h2>
+  <header>
+	  <h2><a href='{{ .Permalink }}'> {{ .Title }}</a> </h2>
+  </header>
   <section id="main">
-    <div class="meta">{{ .Date.Format "Jan 2, 2006" }}</div>
-        {{ template "chrome/categories.html" . }}
     {{ .Content }}
+	<footer class="myclass">
+		<div class="meta">{{ .Date.Format "Jan 2, 2006" }}</div>
+		{{ template "chrome/categories.html" . }}
+	</footer>
   </section>
 </article>
