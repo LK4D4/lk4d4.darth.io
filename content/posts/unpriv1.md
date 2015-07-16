@@ -56,7 +56,8 @@ cmd.SysProcAttr = &syscall.SysProcAttr{
 
 Here you can see `syscall.CLONE_NEWUSER` flag in `SysProcAttr.Cloneflags`, which
 means just "pls, create new user namespace for this process", other namespace
-can be specified there too. Mappings fields talk for themselves.
+can be specified there too. Mappings fields talk for themselves. `Size` means
+size of range of mapped IDs, so you can remap many IDs without specifying each.
 
 ## PID namespaces
 
