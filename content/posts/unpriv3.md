@@ -135,8 +135,9 @@ put_old and makes new_root the new root filesystem of the calling process.
 ```
 So, it's taking current root, moves it to `old_root` with all mounts and makes
 `new_root` as new root. `pivot_root` is more secure than `chroot`, it's pretty hard
-to escape from it, but if you want to have rootfs in tmpfs, then you need to use
-mount with MS_MOVE flag and `chroot`, here we won't discuss this case.
+to escape from it. Sometimes `pivot_root` isn't working(for example on Android
+systems, because of special kernel loading process), then you need to use
+mount to "/" with MS_MOVE flag and `chroot` there, here we won't discuss this case.
 
 Here is the function which we will use for changing root:
 {{< highlight go >}}
