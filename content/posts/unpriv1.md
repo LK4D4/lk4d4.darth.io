@@ -27,8 +27,7 @@ by Mrunal Patel and was released in 1.4.0. Unfortunately there was security fix
 to linux kernel 3.18, which prevents group mappings from unprivileged user
 without disabling `setgroups` syscall. It was
 [fixed](https://github.com/golang/go/commit/f5c60ff2da4851f9056120a423ce6b48624fb97e)
-by me and will be released in 1.5.0. But you need to have `go1.5.0beta1` for
-using examples from this post, you can take it at http://golang.org/dl/.
+by me and will be released in 1.5.0 (UPD: Already released!).
 
 For executing process in new user namespace, you need to create `*exec.Cmd` like
 this:
