@@ -54,7 +54,7 @@ empty struct and empty struct allocates no memory and can't be collected by GC.
 ## Finalizers examples
 
 Let's try to find finalizers usage in standard library. There it is used only for
-only used for closing file descriptors like this in `net` package:
+for closing file descriptors like this in `net` package:
 {{< highlight go >}}
 runtime.SetFinalizer(fd, (*netFD).Close)
 {{< /highlight >}}
