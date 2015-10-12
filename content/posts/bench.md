@@ -162,7 +162,7 @@ only results of `Delete` calls.
 Of course there is nothing to do with benchmark if you can't compare them on
 different code.
 
-Here is an example code of marshaling struct to json benchhmark for it:
+Here is an example code of marshaling struct to json and benchhmark for it:
 
 {{< highlight go >}}
 type testStruct struct {
@@ -199,7 +199,7 @@ func (t *testStruct) ToJSON() ([]byte, error) {
 }
 {{< /highlight >}}
 
-Now it's time to run our bechmarks, let's save them in files this time:
+Now it's time to run our bechmarks, let's save their results in files this time:
 
 ```
 go test -bench=. -benchmem bench_test.go > new.txt
@@ -209,7 +209,8 @@ go test -bench=. -benchmem bench_test.go > old.txt
 
 Now we can compare those results with
 [benchcmp](https://godoc.org/golang.org/x/tools/cmd/benchcmp) utility. You can
-install it with `go get go get golang.org/x/tools/cmd/benchcmp`.
+install it with `go get go get golang.org/x/tools/cmd/benchcmp`. Here is result
+of comparison:
 
 ```
 # benchcmp old.txt new.txt
@@ -226,8 +227,8 @@ benchmark           old bytes     new bytes     delta
 BenchmarkToJSON     184           48            -73.91%
 ```
 
-Here we can see nice comparison. It's very good to see such tables, they also
-can add weight to your opensource contributions.
+It's very good to see such tables, they also can add weight to your opensource
+contributions.
 
 ## Writing profiles
 
