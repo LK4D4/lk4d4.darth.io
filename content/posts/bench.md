@@ -209,7 +209,7 @@ go test -bench=. -benchmem bench_test.go > old.txt
 
 Now we can compare those results with
 [benchcmp](https://godoc.org/golang.org/x/tools/cmd/benchcmp) utility. You can
-install it with `go get go get golang.org/x/tools/cmd/benchcmp`. Here is result
+install it with `go get golang.org/x/tools/cmd/benchcmp`. Here is result
 of comparison:
 
 ```
