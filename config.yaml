@@ -5,6 +5,6 @@ publishdir: "public"
 pygmentsstyle: "default"
 indexes:
   category: "categories"
-baseurl: "http://lk4d4.darth.io/"
+baseurl: "https://lk4d4.darth.io/"
 title: "Blog about programming, cats and related things"
 ...
