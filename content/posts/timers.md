@@ -10,7 +10,7 @@ categories:
 # How Do They Do It: Timers in Go
 
 This article covers internal implementation of timers in Go. Note that there are
-a lot of links to Go repo in this articles, I recommend to follow them to understand
+a lot of links to Go repo in this article, I recommend to follow them to understand
 material better.
 
 ## Timers
@@ -19,15 +19,67 @@ Timers in Go just do something after a period of time. The user interface for
 timers located in the standard package [time](https://golang.org/pkg/time/).
 In particular, timers are [time.Timer](https://golang.org/pkg/time/#Timer),
 [time.Ticker](https://golang.org/pkg/time/#Ticker) and less obvious timer
-[time.Sleep](https://golang.org/pkg/time/#Sleep). They all based on same data
-structure -
-[runtime.timer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L15).
-Let's see closer what that structure does and how Go handles it.
+[time.Sleep](https://golang.org/pkg/time/#Sleep).
+It's not clear from documentation how timers work exactly. Some people thing that
+each timer spawns it's own goroutine which exists until timer is spawned, because
+that's how we'd implement timers in "naive" way in Go. We can check that assumption
+with small program:
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"runtime/debug"
+	"time"
+)
+
+func main() {
+	debug.SetTraceback("system")
+	if len(os.Args) == 1 {
+		panic("before timers")
+	}
+	for i := 0; i < 10000; i++ {
+		time.AfterFunc(time.Duration(5*time.Second), func() {
+			fmt.Println("Hello!")
+		})
+	}
+	panic("after timers")
+}
+```
+It prints all goroutines traces before timers spawned if run without arguments
+and after timers spawned if any argument is passed. We need those shady panics
+because otherwise there is no easy way to see runtime goroutines - they're excluded
+from `runtime.NumGoroutines`. Let's see how many goroutines Go spawns in case of
+before spawning any timers:
+```
+go run afterfunc.go 2>&1 | grep "^goroutine" | wc -l
+4
+```
+and after spawning 10k timers:
+```
+go run afterfunc.go after 2>&1 | grep "^goroutine" | wc -l
+5
+```
+Whoa! It's only one goroutine, in my case its trace looks like:
+```
+goroutine 5 [syscall]:
+runtime.notetsleepg(0x5014b8, 0x12a043838, 0x0)
+        /home/moroz/go/src/runtime/lock_futex.go:205 +0x42 fp=0xc42002bf40 sp=0xc42002bf10
+runtime.timerproc()
+        /home/moroz/go/src/runtime/time.go:209 +0x2ec fp=0xc42002bfc0 sp=0xc42002bf40
+runtime.goexit()
+        /home/moroz/go/src/runtime/asm_amd64.s:2160 +0x1 fp=0xc42002bfc8 sp=0xc42002bfc0
+created by runtime.addtimerLocked
+        /home/moroz/go/src/runtime/time.go:116 +0xed
+```
+Let's see closer why is it so exactly.
 
 ## runtime.timer
-
-For adding new timer, you need to instantiate `runtime.timer` and pass it to
-function
+All timers are based on the same data structure -
+[runtime.timer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L15).
+In order to add new timer, you need to instantiate `runtime.timer` and pass it
+to function
 [runtime.startTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L64).
 Here is example from `time` package:
 ```go
@@ -45,7 +97,7 @@ func NewTimer(d Duration) *Timer {
     return t
 }
 ```
-So, here we convert duration to exact timestamp `when` timer should call
+So, here we're converting duration to exact timestamp `when` timer should call
 function `f` with argument `c`. There are three types of function `f` used in
 package time:
 
@@ -55,11 +107,11 @@ sends current time to channel or discards it if send blocks. Used in
 and
 [time.Ticker](https://github.com/golang/go/blob/release-branch.go1.7/src/time/tick.go#L34).
 
-* [goFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L116) -
+* [goFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L153) -
 executes some function in goroutine. Used in
 `[time.AfterFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L145).
 
-* [goroutineReady](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L145) -
+* [goroutineReady](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L81) -
 wakes up specific goroutime. Used in
 [runtime.timeSleep](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L48)
 which is linked to `time.Sleep`.
@@ -74,11 +126,11 @@ call them.
 is just a [Heap data structure](https://en.wikipedia.org/wiki/Heap_(data_structure)).
 Heap is very useful when you want to repeatedly find extremum (minimum or maximum) among
 some elements. In our case extremum is a timer with closest `when` to the current
-time. Very convenient, isn't it?  For maintaining heap properties functions
+time. Very convenient, isn't it?
 [siftupTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L238)
 and [siftdownTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L255)
-are used.
-But data structures doesn't work on their own; something should use them. In our 
+functions  are used for maintaining heap properties.
+But data structures don't work on their own; something should use them. In our 
 case it's just one goroutine with function
 [timerproc](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L154).
 It's spawned on
@@ -90,9 +142,8 @@ It's kinda hard to describe what's going on without source code, so this section
 will be in form of commented Go code. Code is direct copy from `src/runtime/time.go`
 file with added comments.
 ```
-// Add a timer to the heap and start or kick the timer proc.
-// If the new timer is earlier than any of the others.
-// Timers are locked.
+// Add a timer to the heap and start or kick the timerproc if the new timer is
+// earlier than any of the others.
 func addtimerLocked(t *timer) {
 	// when must never be negative; otherwise timerproc will overflow
 	// during its delta calculation and never expire other runtime·timers.
@@ -126,7 +177,7 @@ func addtimerLocked(t *timer) {
 
 // Timerproc runs the time-driven events.
 // It sleeps until the next event in the timers heap.
-// If addtimer inserts a new earlier event, addtimer1 wakes timerproc early.
+// If addtimer inserts a new earlier event, addtimerLocked wakes timerproc early.
 func timerproc() {
 	// set timer goroutine
 	timers.gp = getg()
