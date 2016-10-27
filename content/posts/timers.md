@@ -125,7 +125,15 @@ call them.
 is just a [Heap data structure](https://en.wikipedia.org/wiki/Heap_(data_structure)).
 Heap is very useful when you want to repeatedly find extremum (minimum or maximum) among
 some elements. In our case extremum is a timer with closest `when` to the current
-time. Very convenient, isn't it?
+time. Very convenient, isn't it? So, let's see what algorithmic complexity has
+operations with timers for worst case:
+* add new timer - O(log(n))
+* delete timer - O(log(n))
+* spawning timers functions - O(log(n))
+So, if you have 1 million timers, number of operations with heap will usually be
+less than 100(log(1kk) ~= 13, but spawning can require multiple minimum deletions,
+because multiple timers can reach their deadline about the same time).
+It's very fast and all work happening in separate goroutine so it doesn't block.
 [siftupTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L238)
 and [siftdownTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L255)
 functions are used for maintaining heap properties.
