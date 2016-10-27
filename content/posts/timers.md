@@ -259,16 +259,32 @@ func timerproc() {
 }
 ```
 There are two variables which I think deserve explanation: `rescheduling` and
-`sleeping`.
-
-- `rescheduling` is set when there is no timers in our heap, it puts
-goroutine to sleep until `goready` function with timers goroutine as argument is
-called.
+`sleeping`. They both indicate that goroutine was put to sleep, but different
+synchronization mechanisms are used, let's discuss them.
 
 - `sleeping` is set when all "current" timers are processed, but there is more
-which we need to spawn in future. It puts goroutine to sleep until soonest `when`.
-It can be woken up by `addtimerLocked` because it can add timer which will be
-"soonest" now.
+which we need to spawn in future. It uses OS-based synchronization, so it calls
+some OS syscalls to put to sleep and wake up goroutine and syscalls means it spawns
+OS threads for this.
+It uses [note](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/runtime2.go#L131)
+structure and next functions for synchronization:
+	* [noteclear](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L125) -
+	resets note state, just sets key to 0.
+	* [notetsleepg](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L199) - 
+	puts goroutine to sleep until `notewakeup` is called or after some period of time (in case of timers it's time until next timer).
+	* [notewakeup](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L129) - 
+	wakes up goroutine which called `notetsleepg`.
+`notewakeup` might be called in `addtimerLocked` if new timer is "earlier" than
+previous "earliest" timer.
+
+- `rescheduling` is set when there is no timers in our heap, so nothing to do.
+It uses go scheduler to put goroutine to sleep with function
+[goparkunlock](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/proc.go#L264).
+Unlike `notetsleepg` it does not consume any OS resources, but also does not
+support "wakeup timeout", so it can't be used instead of `notetsleepg` in
+`sleeping` branch.
+[goready](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/proc.go#L264)
+function is used for waking up goroutine when new timer added with `addTimerLocked`.
 
 ## Conclusion
 
