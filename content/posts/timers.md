@@ -20,10 +20,10 @@ timers located in the standard package [time](https://golang.org/pkg/time/).
 In particular, timers are [time.Timer](https://golang.org/pkg/time/#Timer),
 [time.Ticker](https://golang.org/pkg/time/#Ticker) and less obvious timer
 [time.Sleep](https://golang.org/pkg/time/#Sleep).
-It's not clear from documentation how timers work exactly. Some people thing that
-each timer spawns it's own goroutine which exists until timer is spawned, because
+It's not clear from the documentation how timers work exactly. Some people thing that
+each timer spawns it's own goroutine which exists until the timer is spawned because
 that's how we'd implement timers in "naive" way in Go. We can check that assumption
-with small program:
+with the small program:
 ```go
 package main
 
@@ -78,8 +78,7 @@ Let's see closer why is it so exactly.
 ## runtime.timer
 All timers are based on the same data structure -
 [runtime.timer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L15).
-In order to add new timer, you need to instantiate `runtime.timer` and pass it
-to function
+To add new timer, you need to instantiate `runtime.timer` and pass it to function
 [runtime.startTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L64).
 Here is example from `time` package:
 ```go
@@ -129,7 +128,7 @@ some elements. In our case extremum is a timer with closest `when` to the curren
 time. Very convenient, isn't it?
 [siftupTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L238)
 and [siftdownTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L255)
-functions  are used for maintaining heap properties.
+functions are used for maintaining heap properties.
 But data structures don't work on their own; something should use them. In our 
 case it's just one goroutine with function
 [timerproc](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L154).
@@ -190,7 +189,7 @@ func timerproc() {
 		delta := int64(-1)
 		// iterate over timers in heap starting from [0]
 		for {
-			// there is no more timers, exit iterating loop
+			// there are no more timers, exit iterating loop
 			if len(timers.t) == 0 {
 				delta = -1
 				break
@@ -269,19 +268,21 @@ OS threads for this.
 It uses [note](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/runtime2.go#L131)
 structure and next functions for synchronization:
 	* [noteclear](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L125) -
-	resets note state, just sets key to 0.
+	resets note state.
 	* [notetsleepg](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L199) - 
-	puts goroutine to sleep until `notewakeup` is called or after some period of time (in case of timers it's time until next timer).
+	puts goroutine to sleep until `notewakeup` is called or after some period
+	of time (in case of timers it's time until next timer). This func fills `timers.waitnote`
+	with "pointer to timer goroutine".
 	* [notewakeup](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/lock_futex.go#L129) - 
 	wakes up goroutine which called `notetsleepg`.
 `notewakeup` might be called in `addtimerLocked` if new timer is "earlier" than
 previous "earliest" timer.
 
-- `rescheduling` is set when there is no timers in our heap, so nothing to do.
+- `rescheduling` is set when there are no timers in our heap, so nothing to do.
 It uses go scheduler to put goroutine to sleep with function
 [goparkunlock](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/proc.go#L264).
 Unlike `notetsleepg` it does not consume any OS resources, but also does not
-support "wakeup timeout", so it can't be used instead of `notetsleepg` in
+support "wakeup timeout" so it can't be used instead of `notetsleepg` in
 `sleeping` branch.
 [goready](https://github.com/golang/go/blob/2f6557233c5a5c311547144c34b4045640ff9f71/src/runtime/proc.go#L264)
 function is used for waking up goroutine when new timer added with `addTimerLocked`.
