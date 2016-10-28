@@ -131,7 +131,7 @@ operations with timers for worst case:
 * delete timer - O(log(n))
 * spawning timers functions - O(log(n))
 So, if you have 1 million timers, number of operations with heap will usually be
-less than 100(log(1kk) ~= 13, but spawning can require multiple minimum deletions,
+less than 1000(log(1kk) ~= 20, but spawning can require multiple minimum deletions,
 because multiple timers can reach their deadline about the same time).
 It's very fast and all work happening in separate goroutine so it doesn't block.
 [siftupTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L238)
