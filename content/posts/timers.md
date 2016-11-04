@@ -1,11 +1,10 @@
----
-title: ""
-description: ""
-date: "2016-10-21"
++++
+author = ["Alexander Morozov", "Vyacheslav Bakhmutov"]
+date = "2016-12-04T08:00:00-05:00"
+series = ["Advent 2016"]
+title = "How Do They Do It: Timers in Go"
 draft = true
-categories:
-    - "go"
----
++++
 
 # How Do They Do It: Timers in Go
 
@@ -18,7 +17,7 @@ material better.
 Timers in Go just do something after a period of time. The user interface for
 timers located in the standard package [time](https://golang.org/pkg/time/).
 In particular, timers are [time.Timer](https://golang.org/pkg/time/#Timer),
-[time.Ticker](https://golang.org/pkg/time/#Ticker) and less obvious timer
+[time.Ticker](https://golang.org/pkg/time/#Ticker), and less obvious timer
 [time.Sleep](https://golang.org/pkg/time/#Sleep).
 It's not clear from the documentation how timers work exactly. Some people thing that
 each timer spawns it's own goroutine which exists until the timer is spawned because
@@ -73,7 +72,7 @@ runtime.goexit()
 created by runtime.addtimerLocked
         /home/moroz/go/src/runtime/time.go:116 +0xed
 ```
-Let's see closer why is it so exactly.
+Let's take a look at why there's only one additional goroutine.
 
 ## runtime.timer
 All timers are based on the same data structure -
@@ -108,15 +107,15 @@ and
 
 * [goFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L153) -
 executes some function in goroutine. Used in
-`[time.AfterFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L145).
+[time.AfterFunc](https://github.com/golang/go/blob/release-branch.go1.7/src/time/sleep.go#L145).
 
 * [goroutineReady](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L81) -
-wakes up specific goroutime. Used in
+wakes up specific goroutine. Used in
 [runtime.timeSleep](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L48)
 which is linked to `time.Sleep`.
 
 So, now we understand how timers look like in runtime and what they supposed to
-do. Now let's see how runtime stores timers them and call functions when it's time to
+do. Now let's see how runtime stores timers and call functions when it's time to
 call them.
 
 ## runtime.timers
@@ -133,7 +132,7 @@ operations with timers for worst case:
 So, if you have 1 million timers, number of operations with heap will usually be
 less than 1000(log(1kk) ~= 20, but spawning can require multiple minimum deletions,
 because multiple timers can reach their deadline about the same time).
-It's very fast and all work happening in separate goroutine so it doesn't block.
+It's very fast and all work is happening in separate goroutine, so it doesn't block.
 [siftupTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L238)
 and [siftdownTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L255)
 functions are used for maintaining heap properties.
@@ -143,10 +142,10 @@ case it's just one goroutine with function
 It's spawned on
 [first timer start](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L114).
 
-## runtime.timeproc
+## runtime.timerproc
 
 It's kinda hard to describe what's going on without source code, so this section
-will be in form of commented Go code. Code is direct copy from `src/runtime/time.go`
+will be in the form of commented Go code. Code is direct copy from `src/runtime/time.go`
 file with added comments.
 ```
 // Add a timer to the heap and start or kick the timerproc if the new timer is
@@ -170,7 +169,7 @@ func addtimerLocked(t *timer) {
 			notewakeup(&timers.waitnote)
 		}
 		if timers.rescheduling {
-			// run parked goroutine, put to sleep with goparkunlock in timeproc()
+			// run parked goroutine, put to sleep with goparkunlock in timerproc()
 			timers.rescheduling = false
 			goready(timers.gp, 0)
 		}
