@@ -8,6 +8,9 @@ This article covers the internal implementation of timers in Go. Note that there
 a lot of links to Go repo in this article, I recommend to follow them to understand
 the material better.
 
+Article was part of [Go Advent 2016](https://blog.gopheracademy.com/series/advent-2016/)
+series: https://blog.gopheracademy.com/advent-2016/go-timers/
+
 ## Timers
 
 Timers in Go just do something after a period of time. They are located in the
