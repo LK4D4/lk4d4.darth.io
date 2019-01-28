@@ -2,7 +2,7 @@
 contentdir: "content"
 layoutdir: "layouts"
 publishdir: "public"
-pygmentsstyle: "default"
+pygmentsstyle: "friendly"
 indexes:
   category: "categories"
 baseurl: "https://lk4d4.darth.io/"

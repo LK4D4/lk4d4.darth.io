@@ -1,9 +1,9 @@
     <hr />
     <ul class="pager">
-        {{if .Prev}}
-            <li class="previous"><a href="{{.Prev.Permalink}}">&laquo; {{.Prev.Title}}</a>
+        {{if .PrevPage}}
+            <li class="previous"><a href="{{.PrevPage.Permalink}}">&laquo; {{.PrevPage.Title}}</a>
         {{end}}
-        {{if .Next}}
-            <li class="next"><a href="{{.Next.Permalink}}">{{.Next.Title}} &raquo;</a>
+        {{if .NextPage}}
+            <li class="next"><a href="{{.NextPage.Permalink}}">{{.NextPage.Title}} &raquo;</a>
         {{end}}
     </ul>
