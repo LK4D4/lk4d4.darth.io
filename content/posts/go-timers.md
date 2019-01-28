@@ -1,4 +1,5 @@
 +++
+
 title = "How Do They Do It: Timers in Go"
 date = "2015-12-19"
 categories = ["go"]
@@ -22,7 +23,7 @@ It's not clear from the documentation how timers work exactly. Some people think
 that each timer spawns its own goroutine which exists until the timer's deadline
 is reached because that's how we'd implement timers in "naive" way in Go. We can
 check that assumption with the small program:
-```go
+{{< highlight go >}}
 package main
 
 import (
@@ -44,7 +45,7 @@ func main() {
 	}
 	panic("after timers")
 }
-```
+{{< /highlight >}}
 It prints all goroutine traces before timers spawned if run without arguments
 and after timers spawned if any argument is passed. We need those shady panics
 because otherwise there is no easy way to see runtime goroutines - they're excluded
@@ -80,7 +81,7 @@ All timers are based on the same data structure -
 To add new timer, you need to instantiate `runtime.timer` and pass it to the function
 [runtime.startTimer](https://github.com/golang/go/blob/release-branch.go1.7/src/runtime/time.go#L64).
 Here is example from `time` package:
-```go
+{{< highlight go >}}
 func NewTimer(d Duration) *Timer {
     c := make(chan Time, 1)
     t := &Timer{
@@ -94,7 +95,7 @@ func NewTimer(d Duration) *Timer {
     startTimer(&t.r)
     return t
 }
-```
+{{< /highlight >}}
 So, here we're converting duration to an exact timestamp `when` timer should call
 function `f` with argument `c`. There are three types of function `f` used in
 package time:
@@ -150,7 +151,7 @@ It's spawned on
 It's kinda hard to describe what's going on without source code, so this section
 will be in the form of commented Go code. Code is a direct copy from the `src/runtime/time.go`
 file with added comments.
-```
+{{< highlight go >}}
 // Add a timer to the heap and start or kick the timerproc if the new timer is
 // earlier than any of the others.
 func addtimerLocked(t *timer) {
@@ -266,7 +267,7 @@ func timerproc() {
 		notetsleepg(&timers.waitnote, delta)
 	}
 }
-```
+{{< /highlight >}}
 There are two variables which I think deserve explanation: `rescheduling` and
 `sleeping`. They both indicate that the goroutine was put to sleep, but different
 synchronization mechanisms are used, let's discuss them.
