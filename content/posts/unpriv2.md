@@ -113,7 +113,7 @@ Tag on github for this article is `uts_setup`, it can be found
 to separate steps, created `Cfg` structure in `container.go` file, so later we
 can change container configuration in one place.
 Also I added logging with awesome library
-[logrus](https://github.com/Sirupsen/logrus).
+[logrus](https://github.com/sirupsen/logrus).
 
 Thanks for reading! I hope to see you next week in part about mount namespaces,
 it'll be very interesting.

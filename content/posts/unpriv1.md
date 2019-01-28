@@ -88,7 +88,7 @@ For this articles, I created a project on Github: https://github.com/LK4D4/unc.
 [runc](https://github.com/opencontainers/runc)(maybe only a little). I will tag
 code for each article in a repo. Tag for this article is
 [user_pid](https://github.com/LK4D4/unc/tree/user_pid). Just compile it with
-`go1.5` and try to run different commands from an unprivileged user in
+`go1.5` or above and try to run different commands from an unprivileged user in
 namespaces:
 ```
 $ unc sh

@@ -130,10 +130,9 @@ executed with `root` rights. We can set suid bit for this, this will allow
 unprivileged user to run that binary as privileged. I did next:
 ```
 $ go get github.com/LK4D4/unc/unet
-$ su
-$ chown root:root $GOPATH/bin/unet
-$ chmod u+s $GOPATH/bin/unet
-$ ln -s $GOPATH/bin/unet /usr/bin/unet
+$ sudo chown root:root $(go env GOPATH)/bin/unet
+$ sudo chmod u+s $(go env GOPATH)/bin/unet
+$ sudo ln -s $(go env GOPATH)/bin/unet /usr/bin/unet
 ```
 That's all you need to run this binary. Actually you don't need to run it,
 `unc` will do this :)
@@ -269,6 +268,12 @@ round-trip min/avg/max = 0.071/0.071/0.071 ms
 ```
 They can talk! It's like magic, right? You can find all code under tag
 [netns](https://github.com/LK4D4/unc/tree/netns).
+
+You can install latest versions of `unc` and `unet` with
+```
+go get github.com/LK4D4/unc/...
+```
+Binaries will be created in `$(go env GOPATH)/bin/`.
 
 ## The end
 
